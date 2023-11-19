@@ -45,6 +45,8 @@ async function main() {
 
         console.log(score_minimals_fumen);
 
+        console.log();
+
     }
 }
 
