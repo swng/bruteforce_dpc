@@ -82,7 +82,7 @@ async function run(filename) {
 
 async function findBestSet(sets) {
   while (sets.length > 1) {
-    console.log(`Try to find the best set. There are ${sets.length} sets`);
+    // console.log(`Try to find the best set. There are ${sets.length} sets`);
     // find common nodes?
     const diffA = new Set;
     const diffB = new Set(sets[1]);
