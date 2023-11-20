@@ -2,17 +2,17 @@
 // instead of a CLI application, this will be an exported js function that uses 0 user input
 // also, just gonna return fumen of the minimal set instead of md file
 
-const fs = require("fs");
+const fs = require("fs").promises;
 
 const {decoder, encoder} = require("tetris-fumen");
 
 const {csvToPatterns, patternsToGraph, findMinimalNodes} = require(".");
 
 async function run(filename) {
-  const data = fs.readFileSync(filename, "utf8").trim();
+  const data = (await fs.readFile(filename, "utf8")).trim();
   let ignoreData;
   try {
-    ignoreData = fs.readFileSync(".sfinder-minimal-ignore", "utf8");
+    ignoreData = await fs.readFile(".sfinder-minimal-ignore", "utf8");
   } catch (err) {
     // pass
   }
@@ -106,8 +106,8 @@ async function findBestSet(sets) {
   return sets[0];
 }
 
-function output({filename, solutions, patternCount, successCount}) {
-  fs.writeFileSync(filename, `
+async function output({filename, solutions, patternCount, successCount}) {
+  await fs.writeFile(filename, `
 ${solutions.length} minimal solutions  
 Success rate: ${(100 * successCount / patternCount).toFixed(2)}% (${successCount} / ${patternCount})
 

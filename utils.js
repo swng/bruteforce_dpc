@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const { decoder, encoder } = require('tetris-fumen');
 
 function countpieces(inputStr) {
@@ -147,7 +147,7 @@ async function write_nohold_queues(sfinder_notation_queues, nohold_queues_txt) {
 
     let content = Array.from(nohold_queues).join("\n");
 
-    fs.writeFileSync(nohold_queues_txt, content);
+    await fs.writeFile(nohold_queues_txt, content);
 }
 
 function parse_results(results, patternCount, successCount) {
@@ -161,6 +161,19 @@ function parse_results(results, patternCount, successCount) {
     return encoder.encode(pages);
 }
 
-module.exports = { write_nohold_queues, parse_results };
+async function deleteFiles(filePaths) {
+    try {
+      for (const filePath of filePaths) {
+        await fs.unlink(filePath);
+        // console.log(`File ${filePath} deleted successfully`);
+      }
+    } catch (err) {
+    //   console.error('Error deleting file:', err);
+    }
+  }
+
+
+
+module.exports = { write_nohold_queues, parse_results, deleteFiles };
 
 // write_nohold_queues("T,*p7", "input/nohold_queues.txt")

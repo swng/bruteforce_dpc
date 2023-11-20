@@ -1,5 +1,5 @@
 const {encoder, decoder, Page, Field} = require('tetris-fumen');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const GAMES = {JSTRIS: {}, TETRIO: {}, GUIDELINE: {}};
 const GAME = GAMES.TETRIO;
@@ -939,8 +939,8 @@ function pick_better_score(so0, so1) {
 	return so1;
 }
 
-function loadCSV(filename) {
-	let csv = fs.readFileSync(filename, 'utf8');
+async function loadCSV(filename) {
+	let csv = await fs.readFile(filename, 'utf8');
 	let lines = csv.split(/\s+/); // this is regex for any whitespace /r /n /t /f /v
 	let data = {};
 	for (let line of lines) {
@@ -950,7 +950,7 @@ function loadCSV(filename) {
 	return data;
 }
 
-function writeCSV(filename, data)
+async function writeCSV(filename, data)
 {
 	let csv = '';
 	let keys = Object.keys(data);
@@ -960,11 +960,11 @@ function writeCSV(filename, data)
 		if (key === 'sequence') {continue;}
 		csv += `${key},${data[key].join(',')}\n`;
 	}
-	fs.writeFileSync(filename, csv);
+	await fs.writeFile(filename, csv);
 }
 
 
-function reduce_to_maximal_scoring_cover(
+async function reduce_to_maximal_scoring_cover(
 	queues,
 	data,
 	data_nohold,
@@ -1054,11 +1054,11 @@ function reduce_to_maximal_scoring_cover(
 			}
 		}
 
-		writeCSV(outputfilename, data);
+		await writeCSV(outputfilename, data);
 
 }
 
-function wrapper_reduce_to_maximal_scoring_cover(holdcover = "cover.csv", noholdcover = "cover_nohold.csv", outputfilename = "new_cover.csv", initialB2B = false, initialCombo = 0, b2bEndBonus = 0, fuzzymargin = 200, save_weights = undefined) {
+async function wrapper_reduce_to_maximal_scoring_cover(holdcover = "cover.csv", noholdcover = "cover_nohold.csv", outputfilename = "new_cover.csv", initialB2B = false, initialCombo = 0, b2bEndBonus = 0, fuzzymargin = 200, save_weights = undefined) {
     // holdcover = "cover.csv"
     // noholdcover = "cover_nohold.csv"
     // outputfilename = "new_cover.csv"
@@ -1069,8 +1069,8 @@ function wrapper_reduce_to_maximal_scoring_cover(holdcover = "cover.csv", nohold
     // let fuzzymargin = 200;
     // let save_weights = undefined;
 
-    let data = loadCSV(holdcover);
-    let data_nohold = loadCSV(noholdcover);
+    let data = await loadCSV(holdcover);
+    let data_nohold = await loadCSV(noholdcover);
 
     let queues = Object.keys(data).filter(q => q !== 'sequence' && q !== '');
 
@@ -1082,7 +1082,7 @@ function wrapper_reduce_to_maximal_scoring_cover(holdcover = "cover.csv", nohold
     //     ${save_weights}, // an object detailing weights for each save
     // `)
 
-    reduce_to_maximal_scoring_cover(queues,
+    await reduce_to_maximal_scoring_cover(queues,
         data,
         data_nohold,
         outputfilename,

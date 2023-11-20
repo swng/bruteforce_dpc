@@ -3,19 +3,28 @@ const { decoder, encoder } = require('tetris-fumen');
 const {unglue} = require('./unglueFumens.js');
 const {make_sys_call} = require('./make_sys_call.js');
 const {grab_solutions} = require('./read_path_csv.js');
-const {write_nohold_queues, parse_results} = require('./utils.js');
+const {write_nohold_queues, parse_results, deleteFiles} = require('./utils.js');
 const {wrapper_reduce_to_maximal_scoring_cover} = require('./scoremins.js');
 const {cover_to_path} = require('./cover_to_path');
 const {run} = require('./sfinder-strict-minimal/run.js');
+const {verify} = require('./verify_setup_sol_match.js')
 
-async function main() {
-    // let fumens = ["v115@vhHO6IzfBKpBUmB/tBFqB0sBRwB"];
-    // unglued = unglue(fumens);
+async function score_minimals(fumen) {
+        // console.log(fumen);
 
-    let fumens = fs.readFileSync("./z_dpc_all_ordered.txt", 'utf8').split("\n");
+        const filesToDelete = [
+            'input/nohold_queues.txt',
+            'input/solutions_feed.txt',
+            'output/cover.csv',
+            'output/cover_nohold.csv',
+            'output/last_output.txt',
+            'output/path.csv',
+            './path.csv',
+            './new_cover.csv'
+          ];
+          
+        await deleteFiles(filesToDelete);
 
-    for (i = 0; i < fumens.length; i++) {
-        let fumen = fumens[i];
 
         let queues = "*p7";
 
@@ -43,10 +52,21 @@ async function main() {
 
         let score_minimals_fumen = parse_results(results.solutions, results.patternCount, results.successCount);
 
+        verify(fumen, score_minimals_fumen);
+
         console.log(score_minimals_fumen);
+}
 
-        console.log();
+async function main() {
+    // let fumens = ["v115@vhHO6IzfBKpBUmB/tBFqB0sBRwB"];
+    // unglued = unglue(fumens);
 
+    let fumens = fs.readFileSync("./z_dpc_all_ordered.txt", 'utf8').split("\n");
+
+    for (i = 0; i < 5; i++) {
+        let fumen = fumens[i];
+        await score_minimals(fumen);
+        // console.log();
     }
 }
 

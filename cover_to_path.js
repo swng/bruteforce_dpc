@@ -1,8 +1,8 @@
-const fs = require('fs');
+const fs = require("fs").promises;
 const {unglue} = require('./unglueFumens.js');
 
 async function cover_to_path(input, output) {
-    let csv = fs.readFileSync(input, 'utf8');
+    let csv = await fs.readFile(input, 'utf8');
     let rows = csv.trim().split("\n").map(s => s.split(','));
 
     const ungluedRow = unglue(rows[0].slice(1));
@@ -23,10 +23,7 @@ async function cover_to_path(input, output) {
     }
 
     // console.log(`Writing to file: ${output}`);
-    const writeStream = fs.createWriteStream(output, { flags: 'w', encoding: 'utf8' });
-
-    writeStream.write(outputCSV.map(row => row.join(',')).join('\n'));
-    writeStream.end();
+    await fs.writeFile(output, outputCSV.map(row => row.join(',')).join('\n'));
 }
 
 module.exports = {cover_to_path}
