@@ -63,7 +63,7 @@ async function main() {
 
     let fumens = fs.readFileSync("./z_dpc_all_ordered.txt", 'utf8').split("\n");
 
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < fumens.length; i++) {
         let fumen = fumens[i];
         await score_minimals(fumen);
         // console.log();
