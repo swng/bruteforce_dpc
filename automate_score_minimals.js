@@ -12,6 +12,7 @@ const {verify} = require('./verify_setup_sol_match.js')
 
 async function score_minimals(fumen, name) {
         // console.log(fumen);
+        console.log(name)
 
         const filesToDelete = [
             'input/nohold_queues.txt',
@@ -75,14 +76,14 @@ async function main() {
 
     // let fumens = fs.readFileSync("./z_dpc_all_ordered.txt", 'utf8').split("\n");
 
-    let csv = await fs.readFile("Z.csv", 'utf8');
+    let csv = await fs.readFile("I.csv", 'utf8');
 	let rows = csv.trim().split("\n").map(s => s.split(',').map(e => e.trim()));
 
     let fumens = unglue(rows[0].slice(1));
     let names = rows[1].slice(1);
 
 
-    for (i = 0; i < fumens.length; i++) {
+    for (i = 1; i < fumens.length; i++) {
         let fumen = fumens[i];
         await score_minimals(fumen, names[i]);
         // console.log();
