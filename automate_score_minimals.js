@@ -76,7 +76,7 @@ async function main() {
 
     // let fumens = fs.readFileSync("./z_dpc_all_ordered.txt", 'utf8').split("\n");
 
-    let csv = await fs.readFile("I.csv", 'utf8');
+    let csv = await fs.readFile("T.csv", 'utf8');
 	let rows = csv.trim().split("\n").map(s => s.split(',').map(e => e.trim()));
 
     let fumens = unglue(rows[0].slice(1));
